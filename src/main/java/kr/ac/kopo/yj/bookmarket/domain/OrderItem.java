@@ -1,0 +1,19 @@
+package kr.ac.kopo.yj.bookmarket.domain;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import lombok.Data;
+
+import java.math.BigDecimal;
+
+@Data
+@Entity
+public class OrderItem {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String bookId; // 도서 코드
+    private int quantity; // 도서 수량
+    private BigDecimal totalPrice;
+}
