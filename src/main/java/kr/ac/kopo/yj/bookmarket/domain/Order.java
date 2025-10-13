@@ -2,6 +2,8 @@ package kr.ac.kopo.yj.bookmarket.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -9,6 +11,8 @@ import java.util.Map;
 
 @Data
 @Entity
+@Getter
+@Setter
 @Table(name = "orders")
 public class Order {
     @Id
@@ -21,11 +25,13 @@ public class Order {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "shipping_id")
-    private Customer shipping;
+    private Shipping shipping;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_order_id")
     private Map<String, OrderItem> orderItems = new HashMap<String, OrderItem>();
 
     private BigDecimal grandTotal;
+
+
 }

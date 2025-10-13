@@ -2,10 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"> <!-- 자동 완성을 위해서 선언함 -->
 <head>
     <meta charset="UTF-8">
-    <title>장바구니</title>
+    <title>주문 고객 정보</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="/BookMarket/js/controllers.js"></script>
 </head>
 <body>
 <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
@@ -73,58 +72,66 @@
 
         <div class="p-5 mb-4 bg-body-tertiary rounded-3">
             <div class="container-fluid py-5">
-                <h1 class="display-5 fw-bold">장바구니</h1>
+                <h1 class="display-5 fw-bold">주문 고객 정보</h1>
                 <p class="col-md-8 fs-4">BookMarket</p>
             </div>
         </div>
 
         <div class="row align-items-md-stretch">
-            <div class="col-md-12">
-                <form name="deleteForm" method="post">
-                    <input type="hidden" name="_method" value="delete">
-                    <a th:href="'javascript:deleteCart()'" class="btn btn-danger" style="float: right">&laquo; 삭제하기</a>
-                    <a th:href="'/BookMarket/order/' + ${cartId}" class="btn btn-success text-right" style="float: right">주문하기 &raquo;</a>
-                </form>
-            </div>
-            <div style="padding-top: 50px">
-                <table class="table table-hover">
-                    <tr>
-                        <th>도서</th>
-                        <th>가격</th>
-                        <th>수량</th>
-                        <th>소계</th>
-                        <th>비고</th>
-                        <th></th>
-                    </tr>
-                    <form name="removeForm" method="post">
-                        <input type="hidden" name="_method" value="delete">
-                        <div th:if="${cart != null}">
-                            <div th:each="cartItem : ${cart.cartItems}">
-                                <tr>
-                                    <td th:text="${cartItem.value.book.bookId} + ' - ' + ${cartItem.value.book.name}"></td>
-                                    <td th:text="${cartItem.value.book.unitPrice}"></td>
-                                    <td th:text="${cartItem.value.quantity}"></td>
-                                    <td th:text="${cartItem.value.totalPrice}"></td>
-                                    <td><a th:href="'javascript:removeFromCart(\'' + ${cartItem.value.book.bookId} + '\', \'' + ${cartId} + '\')'"><span class="badge text-bg-danger">삭제</span></a></td>
-                                </tr>
-                            </div>
-                        </div>
-                    </form>
-                </table>
-                <div class="text-end" style="padding-right: 30px">
-                    <b>총액</b>
-                    <span th:if="${cart != null}">
-                        <b>[[${cart.grandTotal}]]</b>
-                    </span>
+            <form th:object="${shipping}" action="/BookMarket/order/orderShippingInfo" method="post">
+                <legend>고객 세부 사항</legend>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 control-label">성명</label>
+                    <div class="col-sm-3">
+                        <input type="text" name="name" class="form-control" th:field="*{name}"/>
+                    </div>
                 </div>
-
-
-                <a href="/BookMarket/books" class="btn btn-secondary" role="button">&laquo; 도서 목록</a>
-            </div>
-            <footer class="pt-3 mt-4 text-body-secondary border-top">
-                <span class="text-body-secondary">&copy; 2025 BookMarket</span>
-            </footer>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 control-label">배송일</label>
+                    <div class="col-sm-3">
+                        <input type="text" name="phone" class="form-control" th:field="*{date}" placeholder="yyyy/mm/dd"/>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-danger" th:errors="*{date}"></p>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 control-label">국가명</label>
+                    <div class="col-sm-3">
+                        <input type="text" name="address.country" class="form-control" th:field="*{address.country}"/>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 control-label">우편번호</label>
+                    <div class="col-sm-3">
+                        <input type="text" name="address.zipcode" class="form-control" th:field="*{address.zipcode}"/>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 control-label">기본 주소</label>
+                    <div class="col-sm-3">
+                        <input type="text" name="address.addressName" class="form-control" cols="50" rows="2" th:field="*{address.addressName}"/>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-sm-2 control-label">상세 주소</label>
+                    <div class="col-sm-3">
+                        <input type="text" name="address.detailName" class="form-control" cols="50" rows="2" th:field="*{address.detailName}"/>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <a href="/BookMarket/order/orderCustomerInfo" class="btn btn-secondary" role="button">이전</a>
+                        <button type="submit" class="btn btn-primary">등록</button>
+                        <a href="/BookMarket/order/orderCancelled" class="btn btn-secondary" role="button">취소</a>
+                    </div>
+                </div>
+            </form>
         </div>
+        <footer class="pt-3 mt-4 text-body-secondary border-top">
+            <span class="text-body-secondary">&copy; 2025 BookMarket</span>
+        </footer>
+    </div>
 </main>
 </body>
 </html>

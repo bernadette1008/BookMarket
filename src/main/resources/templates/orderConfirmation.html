@@ -2,10 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"> <!-- 자동 완성을 위해서 선언함 -->
 <head>
     <meta charset="UTF-8">
-    <title>장바구니</title>
+    <title>주문 확인 정보</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="/BookMarket/js/controllers.js"></script>
 </head>
 <body>
 <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
@@ -73,58 +72,89 @@
 
         <div class="p-5 mb-4 bg-body-tertiary rounded-3">
             <div class="container-fluid py-5">
-                <h1 class="display-5 fw-bold">장바구니</h1>
+                <h1 class="display-5 fw-bold">주문 정보</h1>
                 <p class="col-md-8 fs-4">BookMarket</p>
             </div>
         </div>
 
         <div class="row align-items-md-stretch">
-            <div class="col-md-12">
-                <form name="deleteForm" method="post">
-                    <input type="hidden" name="_method" value="delete">
-                    <a th:href="'javascript:deleteCart()'" class="btn btn-danger" style="float: right">&laquo; 삭제하기</a>
-                    <a th:href="'/BookMarket/order/' + ${cartId}" class="btn btn-success text-right" style="float: right">주문하기 &raquo;</a>
-                </form>
-            </div>
-            <div style="padding-top: 50px">
-                <table class="table table-hover">
-                    <tr>
-                        <th>도서</th>
-                        <th>가격</th>
-                        <th>수량</th>
-                        <th>소계</th>
-                        <th>비고</th>
-                        <th></th>
-                    </tr>
-                    <form name="removeForm" method="post">
-                        <input type="hidden" name="_method" value="delete">
-                        <div th:if="${cart != null}">
-                            <div th:each="cartItem : ${cart.cartItems}">
+            <form th:object="${customer}" action="/BookMarket/order/orderComfirmation" method="post" class="form-horizontal">
+                <div class="container col-md-10 py-5" style="background: #fafafe">
+                    <div class="text-center">
+                        <h1>영수증</h1>
+                    </div>
+                    <div class="row text-left">
+                        <div class="col-md-6 py-3">
+                            <b>배송 주소</b>
+
+                            성명 : [[${order.shipping.name}]]
+
+                            우편 번호 : [[${order.shipping.address.zipcode}]]
+
+                            주소 : [[${order.shipping.address.addressName}]] [[${order.shipping.address.addressName}]]([[${order.shipping.address.country}]])
+
+                        </div>
+                        <div class="col-md-6 py-3">
+                            <p><em>배송일 : [[${order.shipping.date}]]</em></p>
+                        </div>
+                    </div>
+                    <div class="row text-left">
+                        <div class="col-md-6 py-2">
+                            <b>청구 주소</b>
+
+                            성명 : [[${order.customer.name}]]
+
+                            우편 번호 : [[${order.customer.address.zipcode}]]
+
+                            주소 : [[${order.customer.address.addressName}]] [[${order.customer.address.addressName}]]([[${order.customer.address.country}]])
+
+                            Mobile : [[${order.customer.phone}]]
+
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <table class="table table-hover">
+                            <thead>
+                            <th>도서</th>
+                            <th>수량</th>
+                            <th>가격</th>
+                            <th>소개</th>
+                            </thead>
+                            <tbody>
+                            <div class="col-md-4" th:each="cartItem : ${order.orderItems}">
                                 <tr>
-                                    <td th:text="${cartItem.value.book.bookId} + ' - ' + ${cartItem.value.book.name}"></td>
-                                    <td th:text="${cartItem.value.book.unitPrice}"></td>
-                                    <td th:text="${cartItem.value.quantity}"></td>
-                                    <td th:text="${cartItem.value.totalPrice}"></td>
-                                    <td><a th:href="'javascript:removeFromCart(\'' + ${cartItem.value.book.bookId} + '\', \'' + ${cartId} + '\')'"><span class="badge text-bg-danger">삭제</span></a></td>
+                                    <td>
+                                        <em th:each="book: ${bookList}" th:if="${#strings.equals(book.bookId, cartItem.value.bookId)}">[[${book.name}]]</em>
+                                    </td>
+                                    <td style="text-align: center">[[${cartItem.value.quantity}]]</td>
+                                    <td>
+                                        <span th:each="book: ${bookList}" th:if="${#strings.equals(book.bookId, cartItem.value.bookId)}">[[${book.unitPrice}]]원</span>
+                                    </td>
+                                    <td>
+                                    </td>
                                 </tr>
                             </div>
-                        </div>
-                    </form>
-                </table>
-                <div class="text-end" style="padding-right: 30px">
-                    <b>총액</b>
-                    <span th:if="${cart != null}">
-                        <b>[[${cart.grandTotal}]]</b>
-                    </span>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td class="text-right"><h5><b>총 액 : </b></h5></td>
+                                <td class="text-center text-danger"><h4><b>[[${order.grandTotal}]]</b></h4></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="container col-md-5 py-3">
+                        <a href="/BookMarket/order/orderShippingInfo" class="btn btn-secondary" role="button">이전</a>
+                        <button type="submit" class="btn btn-success">주문 완료</button>
+                        <a href="/BookMarket/order/orderCancelled" class="btn btn-secondary" role="button">취소</a>
+                    </div>
                 </div>
-
-
-                <a href="/BookMarket/books" class="btn btn-secondary" role="button">&laquo; 도서 목록</a>
-            </div>
-            <footer class="pt-3 mt-4 text-body-secondary border-top">
-                <span class="text-body-secondary">&copy; 2025 BookMarket</span>
-            </footer>
+            </form>
         </div>
+        <footer class="pt-3 mt-4 text-body-secondary border-top">
+            <span class="text-body-secondary">&copy; 2025 BookMarket</span>
+        </footer>
+    </div>
 </main>
 </body>
 </html>

@@ -2,10 +2,14 @@ package kr.ac.kopo.yj.bookmarket.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity
+@Getter
+@Setter
 public class Shipping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
