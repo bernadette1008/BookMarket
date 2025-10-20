@@ -14,89 +14,92 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/cart")
+@RequestMapping(value = "/cart")
 public class CartController {
+
     @Autowired
     private CartService cartService;
+
     @Autowired
     private BookService bookService;
 
-    @GetMapping
-    public String requestCartId(HttpServletRequest request) {
-        System.out.println("Call requestCartId()");
-        String sessionId = request.getSession().getId();
-
-        return "redirect:/cart/" + sessionId;
-    }
-
-    @PostMapping
-    public @ResponseBody Cart create(@RequestBody Cart cart) {
-        System.out.println("Call create()");
-
-        return cartService.create(cart);
-    }
-
-    @GetMapping("/{cartId}")
-    public String requestCartList(@PathVariable(value = "cartId") String cartId, Model model){
-        System.out.println("Call requestCartList()");
-        Cart cart = cartService.read(cartId);
-        model.addAttribute("cart", cart);
-        return "cart";
-    }
-
     @PutMapping("/{cartId}")
     public @ResponseBody Cart read(@PathVariable(value = "cartId") String cartId) {
-        System.out.println("Call requestCartList()");
+        System.out.println("read");
         return cartService.read(cartId);
     }
 
+    @GetMapping
+    public String requestCartId(HttpServletRequest request) {
+        System.out.println("redirect cart After requestCartId");
+        String sessionid = request.getSession(true).getId();
+        return "redirect:/cart/"+ sessionid;
+    }
+
+    @PostMapping
+    public @ResponseBody Cart create(@RequestBody Cart cart ) {
+        System.out.println("Cart 생성");
+        return  cartService.create(cart);
+    }
+
+    @GetMapping( "/{cartId}")
+    public String requestCartList(@PathVariable(value = "cartId") String cartId,  Model model) {
+        System.out.println("requestCartList ");
+        Cart cart = cartService.read(cartId);
+        model.addAttribute("cart",cart);
+        return "cart";
+    }
+
+
+
+
     @PutMapping("/book/{bookId}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT) // 콘텐츠가 없을 때
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void addCartByNewItem(@PathVariable("bookId") String bookId, HttpServletRequest request) {
-        String sessionId = request.getSession(true).getId(); // 세션 ID가 있다면 반환
+
+        String sessionId = request.getSession(true).getId();
+
+
         Cart cart = cartService.read(sessionId);
 
         if(cart == null)
-        {
-            cart = cartService.create(new Cart(sessionId)); // 카트 생성
-        }
+            cart = cartService.create(new Cart(sessionId));
 
         Book book = bookService.getBookById(bookId);
+
         if(book == null)
-        {
-            throw new IllegalArgumentException(new BookIdException(bookId)); // Book이 없을 때
-        }
+            throw new IllegalArgumentException(new BookIdException(bookId));
 
         cart.addCartItem(new CartItem(book));
 
         cartService.update(sessionId, cart);
+
     }
 
     @DeleteMapping("/book/{bookId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void removeCartByItem(@PathVariable("bookId") String bookId, HttpServletRequest request) {
+
+
         String sessionId = request.getSession(true).getId();
         Cart cart = cartService.read(sessionId);
-
-        if(cart == null)
-        {
+        if(cart== null)
             cart = cartService.create(new Cart(sessionId));
-        }
-
         Book book = bookService.getBookById(bookId);
         if(book == null)
-        {
             throw new IllegalArgumentException(new BookIdException(bookId));
-        }
 
         cart.removeCartItem(new CartItem(book));
 
         cartService.update(sessionId, cart);
+
     }
 
     @DeleteMapping("/{cartId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteCartList(@PathVariable("cartId") String cartId){
+    public void deleteCartList(@PathVariable("cartId") String cartId) {
+
         cartService.delete(cartId);
     }
+
 }

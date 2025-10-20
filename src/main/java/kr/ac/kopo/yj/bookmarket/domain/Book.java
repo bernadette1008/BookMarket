@@ -13,24 +13,23 @@ import java.math.BigDecimal;
 //@NoArgsConstructor // 공백 주의
 public class Book {
     @BookId
-    @Pattern(regexp = "isbn[0-9]+", message = "{Pattern.book.bookId}")
-    private String bookId; // 도서번호
+    @Pattern(regexp="ISBN[1-9]+", message="{Pattern.book.bookId}")
+    private String bookId; //도서ID
 
-    @Size(min = 4, max = 50, message = "{Size.book.name}")
+    @Size(min=4, max=50, message="{Size.book.name}")
     private String name; // 도서명
 
+    @Min(value=0, message="{Min.book.unitPrice}")
+    @Digits(integer=8, fraction=2, message="{Digits.book.unitPrice}")
     @NotNull(message="{NotNull.book.unitPrice}")
-    @Min(value = 0, message = "{Min.book.unitPrice}")
-    @Digits(integer = 8, fraction = 2, message = "{Digits.book.unitPrice}")
-    private BigDecimal unitPrice; // 단가
-
+    private BigDecimal unitPrice; // 가격
     private String author; // 저자
-    private String description; // 도서 설명
+    private String description; // 설명
     private String publisher; // 출판사
-    private String category; // 도서 분류
-    private long unitsInStock; // 재고량
+    private String category; // 분류
+    private long unitsInStock; // 재고수
     private String releaseDate; // 출판일
-    private String condition; // 신규도서 or 중고도서 or 전자책
-    private String fileName; // 이미지 파일 이름 저장
-    private MultipartFile bookImage;
+    private String condition; // 상태 : 신규도서/E-Book/중고도서
+    private String fileName; //도서 이미지 파일
+    private MultipartFile bookImage;  //도서 이미지
 }

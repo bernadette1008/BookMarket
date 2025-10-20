@@ -1,21 +1,26 @@
-function addToCart(bookId){
-    if(confirm("장바구니에 도서를 추가할까요?")){
-        document.addForm.action = "/BookMarket/cart/book/" + bookId;
-        document.addForm.submit();
-    }
+function addToCart(bookid)
+{
+   
+   if (confirm("장바구니에 도서를 추가합니까?")){
+	
+		document.addForm.action="/BookMarket/cart/book/"+bookid;			
+   		document.addForm.submit();
+   }
+   
+    
+}
+function removeFromCart(bookid, cartId) {
+
+	   document.removeForm.action = "/BookMarket/cart/book/"+bookid;
+	   document.removeForm.submit();
+	   setTimeout('location.reload()',10);
 }
 
-function removeFromCart(bookId, cartId){
-    if(confirm("장바구니에서 도서를 삭제할까요?")){
-        document.removeForm.action = "/BookMarket/cart/book/" + bookId;
-        document.removeForm.submit();
-        setTiemout('location.reload()', 10);
-    }
-}
+function clearCart(cartId) {
+	if (confirm("모든 도서를 장바구니에서 삭제합니까?")==true){
 
-function deleteCart(cartId){
-    if(confirm('모든 도서를 장바구니에서 삭제하시겠습니까?')){
-        document.deleteForm.submit();
-        setTimeout('location.reload()', 10);
-    }
+	   document.clearForm.submit();
+	   setTimeout('location.reload()',10);
+
+	}
 }

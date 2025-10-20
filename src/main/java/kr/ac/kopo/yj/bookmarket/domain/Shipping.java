@@ -8,16 +8,15 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Entity
-@Getter
-@Setter
 public class Shipping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name; // 배송 고객명
+    private String name; //배송고객명
     @DateTimeFormat(pattern = "yyyy/MM/dd")
-    private String date; // 배송일
+    private String date; //배송일
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
 }
+

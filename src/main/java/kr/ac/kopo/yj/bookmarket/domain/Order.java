@@ -11,8 +11,6 @@ import java.util.Map;
 
 @Data
 @Entity
-@Getter
-@Setter
 @Table(name = "orders")
 public class Order {
     @Id
@@ -32,6 +30,4 @@ public class Order {
     private Map<String, OrderItem> orderItems = new HashMap<String, OrderItem>();
 
     private BigDecimal grandTotal;
-
-
 }

@@ -18,43 +18,54 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    protected PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
-    public UserDetailsService userDetailsService() {
+    protected UserDetailsService users() {
         UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("admin1234"))
+                .username("Admin")
+                .password(passwordEncoder().encode("Admin1234"))
                 .roles("ADMIN")
                 .build();
-
         return new InMemoryUserDetailsManager(admin);
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+
+                // 특정 URL에 대한 권한 설정.
                 .authorizeHttpRequests(
-                        authorize -> authorize
-                                .requestMatchers("/books/add").hasRole("ADMIN")
+                        authorizeRequests -> authorizeRequests
+                                .requestMatchers("/books/add").hasRole("ADMIN" )
+                                .requestMatchers("/order/list").hasRole("ADMIN" )
                                 .anyRequest().permitAll()
                 )
-//                .formLogin(Customizer.withDefaults());
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/books/add")
-                        .failureUrl("/loginfailed")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-//                        .permitAll()
+                //.formLogin(Customizer.withDefaults());
+                .formLogin(
+                        formLogin->formLogin
+
+                                .loginPage("/login") // 사용자 정의 로그인 페이지
+                                .loginProcessingUrl("/login")
+                                .defaultSuccessUrl("/books/add")// 로그인 성공 후 이동 페이지
+                                .failureUrl("/loginfailed") // 로그인 실패 후 이동 페이지
+                                .usernameParameter("username")
+                                .passwordParameter("password")
+
                 )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
+
+                .logout(
+                        logout -> logout
+                                .logoutUrl("/logout")
+                                .logoutSuccessUrl("/login")
                 );
+
         return http.build();
+
     }
 }

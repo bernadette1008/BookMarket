@@ -70,76 +70,68 @@ public class BookRepositoryImpl implements BookRepository{
         listOfBooks.add(book3);
     }
 
-    @Override
     public List<Book> getAllBookList() {
         return listOfBooks;
     }
 
-    @Override
+
+    public List<Book> getBookListByCategory(String category) {
+        List<Book> booksByCategory = new ArrayList<Book>();
+        for(int i =0 ; i<listOfBooks.size() ; i++) {
+            Book book = listOfBooks.get(i);
+            if(category.equalsIgnoreCase(book.getCategory()))
+                booksByCategory.add(book);
+        }
+        return booksByCategory;
+    }
+
+    public Set<Book> getBookListByFilter(Map<String, List<String>> filter) {
+        Set<Book> booksByPublisher = new HashSet<Book>();
+        Set<Book> booksByCategory = new HashSet<Book>();
+
+        Set<String> booksByFilter = filter.keySet();
+
+        if (booksByFilter.contains("publisher")) {
+            for (int j = 0; j < filter.get("publisher").size(); j++) {
+                String pubisherName = filter.get("publisher").get(j);
+                for (int i = 0; i < listOfBooks.size(); i++) {
+                    Book book = listOfBooks.get(i);
+
+                    if (pubisherName.equalsIgnoreCase(book.getPublisher()))
+                        booksByPublisher.add(book);
+                }
+            }
+        }
+
+        if (booksByFilter.contains("category")) {
+            for (int i = 0; i < filter.get("category").size(); i++) {
+                String category = filter.get("category").get(i);
+                List<Book> list = getBookListByCategory(category);
+                booksByCategory.addAll(list);
+            }
+        }
+
+        booksByCategory.retainAll(booksByPublisher);
+        return booksByCategory;
+    }
+
     public Book getBookById(String bookId) {
         Book bookInfo = null;
-
-        for(int i = 0; i <listOfBooks.size(); i++){
+        for(int i =0 ;i<listOfBooks.size(); i++) {
             Book book = listOfBooks.get(i);
-            if(book!=null && book.getBookId()!=null && book.getBookId().equals(bookId)){
+            if (book!=null && book.getBookId()!=null && book.getBookId().equals(bookId)){
                 bookInfo = book;
                 break;
             }
         }
-        if(bookInfo==null){
+        if(bookInfo == null)
+            // throw new IllegalArgumentException("도서ID가 "+bookId + "인 해당 도서를 찾을 수 없습니다.");
             throw new BookIdException(bookId);
-//            throw new IllegalArgumentException("도서ID가 "+ bookId +"인 해당 도서를 찾을 수 없습니다.");
-        }
         return bookInfo;
     }
 
-    @Override
-    public List<Book> getBookListByCategory(String category) {
-        List<Book> booksByCategory = new ArrayList<Book>();
-
-        for(Book book : listOfBooks){
-            if(book.getCategory()!=null && book.getCategory().equals(category)){
-                booksByCategory.add(book);
-            }
-        }
-//        if(booksByCategory == null || booksByCategory.isEmpty()){
-//            throw new CategoryException(category);
-//        }
-        return booksByCategory;
+    public void setNewBook(Book book) {
+        listOfBooks.add(book);
     }
-
-    @Override
-    public Set<Book> getBookListByFilter(Map<String, List<String>> filter) {
-        Set<Book> booksByPublisher = new HashSet<Book>();
-        Set<Book> booksByCategory = new HashSet<Book>();
-        Set<String> booksByFilter = filter.keySet();
-
-        if(booksByFilter.contains("publisher")){
-            for (int i = 0; i < filter.get("publisher").size(); i++){
-                String publisherName = filter.get("publisher").get(i);
-                for(Book book : listOfBooks){
-                    if(publisherName.equalsIgnoreCase(book.getPublisher())){
-                        booksByPublisher.add(book);
-                    }
-                }
-            }
-
-            if(booksByFilter.contains("category")){
-                for(int i = 0; i < filter.get("category").size(); i++){
-                    String categoryName = filter.get("category").get(i);
-                    List<Book> list = getBookListByCategory(categoryName);
-                    booksByCategory.addAll(list);
-                }
-            }
-        }
-
-        //두 Set을 비교하여 같은 값만 가진 값만 남기고 나머지는 제거하는 역할
-        booksByCategory.retainAll(booksByPublisher);
-
-        return booksByCategory;
-    }
-
-    @Override
-    public void setNewBook(Book book) {listOfBooks.add(book);}
 
 }
