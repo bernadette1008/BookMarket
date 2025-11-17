@@ -68,7 +68,7 @@ public class MemberController {
             model.addAttribute("errorMessage", e.getMessage());
             return "member/updateMember";
         }
-        return "redirect:/memebers";
+        return "redirect:/members";
     }
 
     @GetMapping(value = "/delete/{memberId}")
