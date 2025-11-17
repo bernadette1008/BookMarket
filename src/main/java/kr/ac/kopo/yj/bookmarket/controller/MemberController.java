@@ -44,7 +44,7 @@ public class MemberController {
             model.addAttribute("errorMessage", e.getMessage());
             return "member/addMember";
         }
-        return "redirect:/memebers";
+        return "redirect:/members";
     }
 
     //회원 수정 폼
