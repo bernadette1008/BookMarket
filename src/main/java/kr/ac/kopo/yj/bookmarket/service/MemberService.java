@@ -19,7 +19,6 @@ public class MemberService implements UserDetailsService {
     //회원 정보 저장
     public Member saveMember(Member member) {
         validateDuplicateMember(member);
-
         return memberRepository.save(member);
     }
 

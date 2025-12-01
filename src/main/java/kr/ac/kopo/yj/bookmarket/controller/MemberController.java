@@ -36,7 +36,6 @@ public class MemberController {
         if(bindingResult.hasErrors()){
             return "member/addMember";
         }
-
         try{
             Member member = Member.createMember(memberFormDto, passwordEncoder);
             memberService.saveMember(member);
@@ -44,7 +43,7 @@ public class MemberController {
             model.addAttribute("errorMessage", e.getMessage());
             return "member/addMember";
         }
-        return "redirect:/members";
+        return "redirect:/";
     }
 
     //회원 수정 폼
