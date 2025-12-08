@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
 
     @Autowired
     private BookRepository bookRepository;
@@ -37,4 +37,13 @@ public class BookServiceImpl implements BookService{
         bookRepository.setNewBook(book);
     }
 
+    @Override
+    public void setUpdateBook(Book book) {
+        bookRepository.setUpdateBook(book);
+    }
+
+    @Override
+    public void setDeleteBook(String bookID) {
+        bookRepository.setDeleteBook(bookID);
+    }
 }
